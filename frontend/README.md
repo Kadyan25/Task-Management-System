@@ -14,3 +14,9 @@ Next.js App Router frontend for the Task Management System.
 - `/login`
 - `/register`
 - `/dashboard`
+
+## Auth Notes
+
+- Access token is kept in local storage.
+- Refresh token is managed by backend httpOnly cookie.
+- Frontend refreshes access token on app load and retries protected requests on `401`.

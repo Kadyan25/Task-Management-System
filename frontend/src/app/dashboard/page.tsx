@@ -1,3 +1,9 @@
+"use client";
+
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
+import { useAuth } from "@/components/providers/auth-provider";
+
 const sampleTasks = [
   { id: "1", title: "Prepare API contract", status: "IN_PROGRESS" },
   { id: "2", title: "Design task dashboard layout", status: "PENDING" },
@@ -5,6 +11,31 @@ const sampleTasks = [
 ];
 
 export default function DashboardPage() {
+  const router = useRouter();
+  const { isInitializing, isAuthenticated, user, logout } = useAuth();
+
+  useEffect(() => {
+    if (!isInitializing && !isAuthenticated) {
+      router.replace("/login");
+    }
+  }, [isAuthenticated, isInitializing, router]);
+
+  if (isInitializing) {
+    return (
+      <div className="app-shell px-4 py-10 md:px-8">
+        <main className="mx-auto w-full max-w-6xl">
+          <section className="surface-card p-6">
+            <p className="text-sm text-[var(--muted)]">Checking session...</p>
+          </section>
+        </main>
+      </div>
+    );
+  }
+
+  if (!isAuthenticated) {
+    return null;
+  }
+
   return (
     <div className="app-shell px-4 py-10 md:px-8">
       <main className="mx-auto flex w-full max-w-6xl flex-col gap-6">
@@ -12,12 +43,20 @@ export default function DashboardPage() {
           <div>
             <h1 className="text-2xl font-semibold md:text-3xl">Task Dashboard</h1>
             <p className="mt-2 text-sm text-[var(--muted)]">
-              Responsive shell ready. Next step: wire search, filters, and CRUD to the API.
+              Signed in as {user?.email ?? "user"}.
             </p>
           </div>
-          <button className="rounded-xl bg-[var(--brand)] px-4 py-2 text-sm font-medium text-white md:w-auto">
-            Add Task
-          </button>
+          <div className="flex gap-2">
+            <button className="rounded-xl bg-[var(--brand)] px-4 py-2 text-sm font-medium text-white md:w-auto">
+              Add Task
+            </button>
+            <button
+              className="rounded-xl border border-[var(--border)] px-4 py-2 text-sm"
+              onClick={() => logout()}
+            >
+              Logout
+            </button>
+          </div>
         </section>
 
         <section className="grid gap-4 md:grid-cols-3">
