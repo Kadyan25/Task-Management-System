@@ -39,7 +39,8 @@ export default function DashboardPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [requestError, setRequestError] = useState<string | null>(null);
 
-  const [editingTask, setEditingTask] = useState<Task | null>(null);
+  const [editorMode, setEditorMode] = useState<"create" | "edit" | null>(null);
+  const [editingTaskId, setEditingTaskId] = useState<string | null>(null);
   const [formTitle, setFormTitle] = useState("");
   const [formDescription, setFormDescription] = useState("");
   const [formStatus, setFormStatus] = useState<TaskStatus>("PENDING");
@@ -55,7 +56,8 @@ export default function DashboardPage() {
   }, []);
 
   const closeEditor = useCallback(() => {
-    setEditingTask(null);
+    setEditorMode(null);
+    setEditingTaskId(null);
     setFormTitle("");
     setFormDescription("");
     setFormStatus("PENDING");
@@ -63,7 +65,8 @@ export default function DashboardPage() {
   }, []);
 
   const openCreate = () => {
-    setEditingTask({ id: "", title: "", description: null, status: "PENDING", userId: "", createdAt: "", updatedAt: "" });
+    setEditorMode("create");
+    setEditingTaskId(null);
     setFormTitle("");
     setFormDescription("");
     setFormStatus("PENDING");
@@ -71,7 +74,8 @@ export default function DashboardPage() {
   };
 
   const openEdit = (task: Task) => {
-    setEditingTask(task);
+    setEditorMode("edit");
+    setEditingTaskId(task.id);
     setFormTitle(task.title);
     setFormDescription(task.description ?? "");
     setFormStatus(task.status);
@@ -133,9 +137,15 @@ export default function DashboardPage() {
     void fetchTasks();
   }, [fetchTasks]);
 
+  useEffect(() => {
+    if (page > totalPages) {
+      setPage(totalPages);
+    }
+  }, [page, totalPages]);
+
   const saveTask = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    if (!editingTask) {
+    if (!editorMode) {
       return;
     }
 
@@ -149,8 +159,8 @@ export default function DashboardPage() {
     };
 
     try {
-      if (editingTask.id) {
-        await authorizedRequest<TaskResponse>(`/tasks/${editingTask.id}`, {
+      if (editorMode === "edit" && editingTaskId) {
+        await authorizedRequest<TaskResponse>(`/tasks/${editingTaskId}`, {
           method: "PATCH",
           body: payload,
         });
@@ -251,9 +261,9 @@ export default function DashboardPage() {
           </div>
         </section>
 
-        {editingTask ? (
+        {editorMode ? (
           <section className="surface-card p-5 md:p-6">
-            <h2 className="text-xl font-semibold">{editingTask.id ? "Edit Task" : "Create Task"}</h2>
+            <h2 className="text-xl font-semibold">{editorMode === "edit" ? "Edit Task" : "Create Task"}</h2>
             <form className="mt-4 grid gap-4 md:grid-cols-3" onSubmit={saveTask}>
               <label className="block text-sm md:col-span-2">
                 <span>Title</span>
