@@ -32,3 +32,11 @@ Use `Authorization: Bearer <access_token>`.
 - `DELETE /tasks/:id`
 - `PATCH /tasks/:id/toggle`
 
+## Sanity Check
+
+With the API running, execute:
+
+- `npm run test:smoke`
+
+The smoke script verifies: register, token refresh, create/list/toggle/delete task, and logout.
+
