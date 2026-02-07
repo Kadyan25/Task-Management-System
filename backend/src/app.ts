@@ -6,6 +6,7 @@ import morgan from "morgan";
 import { errorHandler, notFoundHandler } from "./common/error-handler";
 import { env } from "./config/env";
 import authRouter from "./modules/auth/auth.routes";
+import tasksRouter from "./modules/tasks/tasks.routes";
 
 const app = express();
 
@@ -25,6 +26,7 @@ app.get("/health", (_req, res) => {
 });
 
 app.use("/auth", authRouter);
+app.use("/tasks", tasksRouter);
 
 app.use(notFoundHandler);
 app.use(errorHandler);

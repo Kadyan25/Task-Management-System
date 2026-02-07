@@ -21,3 +21,14 @@ Node.js + TypeScript + Express + Prisma + PostgreSQL API.
 - `POST /auth/refresh`
 - `POST /auth/logout`
 
+## Task Endpoints (Protected)
+
+Use `Authorization: Bearer <access_token>`.
+
+- `POST /tasks`
+- `GET /tasks` (supports `page`, `limit`, `status`, `search`)
+- `GET /tasks/:id`
+- `PATCH /tasks/:id`
+- `DELETE /tasks/:id`
+- `PATCH /tasks/:id/toggle`
+

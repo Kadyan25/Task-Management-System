@@ -1,15 +1,10 @@
 import bcrypt from "bcrypt";
-import jwt, { type JwtPayload, type SignOptions } from "jsonwebtoken";
+import jwt, { type SignOptions } from "jsonwebtoken";
 import { env } from "../../config/env";
 import { HttpError } from "../../common/http-error";
 import { prisma } from "../../lib/prisma";
 import type { LoginInput, RegisterInput } from "./auth.schema";
-
-type TokenPayload = JwtPayload & {
-  sub: string;
-  email: string;
-  tokenType: "access" | "refresh";
-};
+import type { AuthTokenPayload } from "./auth.types";
 
 type SafeUser = {
   id: string;
@@ -39,7 +34,7 @@ const mapSafeUser = (user: {
 });
 
 const signToken = (
-  payload: TokenPayload,
+  payload: AuthTokenPayload,
   secret: string,
   expiresIn: string,
 ): string => {
@@ -63,13 +58,13 @@ const createTokenPair = (user: { id: string; email: string }) => {
   return { accessToken, refreshToken };
 };
 
-const verifyRefreshToken = (token: string): TokenPayload => {
+const verifyRefreshToken = (token: string): AuthTokenPayload => {
   try {
     const payload = jwt.verify(token, env.JWT_REFRESH_SECRET);
     if (typeof payload === "string" || payload.tokenType !== "refresh") {
       throw new HttpError(401, "Invalid refresh token");
     }
-    return payload as TokenPayload;
+    return payload as AuthTokenPayload;
   } catch {
     throw new HttpError(401, "Invalid refresh token");
   }
