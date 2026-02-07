@@ -14,3 +14,10 @@ Node.js + TypeScript + Express + Prisma + PostgreSQL API.
 
 - `GET /health` returns `{ "status": "ok" }`.
 
+## Auth Endpoints
+
+- `POST /auth/register`
+- `POST /auth/login`
+- `POST /auth/refresh`
+- `POST /auth/logout`
+
