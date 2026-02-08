@@ -8,6 +8,7 @@ Track A full-stack implementation:
 ## Prerequisites
 
 - Node.js 20+
+- Node Version Manager (`nvm` or `nvm-windows`) recommended for managing Node versions
 - Docker Desktop (for local PostgreSQL)
 
 ## 1. Start Backend
